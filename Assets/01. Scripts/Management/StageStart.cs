@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class StageStart : MonoBehaviour
 {
-    public  GameObject  GameStartBar;
+    Image Bar_Amout;
 
     bool Add = true;
 
@@ -13,14 +13,13 @@ public class StageStart : MonoBehaviour
 
     void Start()
     {
-        
+        Bar_Amout = GetComponent<Image>();
     }
 
     void Update()
     {
         if (!GameManager.Pause)
         {
-            Image Bar_Amout = GameStartBar.GetComponent<Image>();
 
             if (Add)
             {
@@ -40,7 +39,7 @@ public class StageStart : MonoBehaviour
                     }
                     else
                     {
-                        Destroy(GameStartBar);
+                        GameManager.GameStart = true;
                         Destroy(gameObject);
                     }
                 }

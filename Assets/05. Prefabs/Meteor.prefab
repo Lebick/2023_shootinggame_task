@@ -5703,6 +5703,8 @@ MonoBehaviour:
   Movement_Speed: 15
   HP: 50
   Damage: 10
+  Atk_CD: 0
+  MyScore: 500
   Type: 0
   BulletSpawnPos: []
   bullet: {fileID: 0}

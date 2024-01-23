@@ -5205,15 +5205,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 921bdc47d7d65354793fd31208552e00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Movement_Speed: 10
-  HP: 100
+  Movement_Speed: 30
+  HP: 1
   Damage: 10
-  Atk_CD: 0.1
+  Atk_CD: 0.2
+  MyScore: 1000
   Type: 2
   BulletSpawnPos:
   - {fileID: 2464184099058260192}
   - {fileID: 2464184098529810423}
-  bullet: {fileID: 8329294674428431637, guid: a04603248cb57cd43ab92770906e6b93, type: 3}
+  bullet: {fileID: 8329294674428431637, guid: 9649fccbdc3ec7448a10f168446bbdf3, type: 3}
 --- !u!1 &2464184098137205543
 GameObject:
   m_ObjectHideFlags: 0

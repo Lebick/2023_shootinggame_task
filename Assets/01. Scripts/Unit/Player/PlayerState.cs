@@ -6,10 +6,9 @@ public class PlayerState : MonoBehaviour
 {
     public  static  int     Atk_Level       = 0,
                             Skill_1_Count,
-                            Skill_2_Count;
-
-    public          int     Skill_1_Max_Use,
-                            Skill_2_Max_Use;
+                            Skill_2_Count,
+                            Skill_1_Max_Use = 5,
+                            Skill_2_Max_Use = 5;
 
 
     //

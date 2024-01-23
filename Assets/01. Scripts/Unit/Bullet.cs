@@ -13,7 +13,7 @@ public class Bullet : MonoBehaviour
     float   Destroy_Timer = 1;
 
     public  bool    isFollow;
-    GameObject      Follow_Obj;
+    public  Color   BulletColor;
 
     void Start()
     {

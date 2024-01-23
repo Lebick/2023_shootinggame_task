@@ -7,6 +7,8 @@ public class GameManager : MonoBehaviour
 
     public  static  bool    Pause;
 
+    public  static  bool    GameStart;
+
     public  static  KeyCode AttackKey   = KeyCode.Space;
 
     public  static  float   time;

@@ -31,7 +31,10 @@ public class Boss : Enemy
         }
 
         if (HP <= 0)
+        {
+            GameManager.Score += MyScore;
             Destroy(gameObject);
+        }
     }
 
     IEnumerator Pattern0()
