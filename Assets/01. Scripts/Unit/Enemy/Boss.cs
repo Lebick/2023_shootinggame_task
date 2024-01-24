@@ -6,9 +6,11 @@ using UnityEngine;
 public class Boss : Enemy
 {
     private const string player = "Player";
-    int Now_Pattern;
 
-    bool Patterning;
+    private int Now_Pattern;
+    
+    private bool Patterning;
+
 
     public GameObject Pattern2_Axis;
     Transform[] Pattern2_Pos;
@@ -46,7 +48,7 @@ public class Boss : Enemy
             {
                 foreach (Transform pos in BulletSpawnPos)
                 {
-                    Unit.Instance.SummonBullet(bullet, pos.transform.position, Vector3.zero, 20, 1, 80, player, 3, true);
+                    Unit.Instance.SummonBullet(bullet, pos.transform.position, Vector3.zero, 20, 1, 80, player, true);
                 }
                 yield return new WaitForSecondsRealtime(0.1f);
             }
@@ -71,7 +73,7 @@ public class Boss : Enemy
                     else
                         pos.Rotate(-(5 - j) * 4 * Random.Range(1f, 1.5f), 0, 0);
 
-                    Unit.Instance.SummonBullet(bullet, pos.transform.position, pos.eulerAngles, 20, 1, 20, player, 3);
+                    Unit.Instance.SummonBullet(bullet, pos.transform.position, pos.eulerAngles, 20, 1, 20, player);
                 }
                 yield return new WaitForSeconds(0.05f);
             }
@@ -98,7 +100,7 @@ public class Boss : Enemy
         {
             foreach (Transform pos in Pattern2_Pos)
             {
-                Unit.Instance.SummonBullet(bullet, pos.transform.position, pos.eulerAngles, 20, 1, 30, player, 3);
+                Unit.Instance.SummonBullet(bullet, pos.transform.position, pos.eulerAngles, 20, 1, 30, player);
             }
             yield return new WaitForSeconds(0.33f);
             Pattern2_Axis.transform.Rotate(0, Random.Range(0, 180), 0);
@@ -111,7 +113,7 @@ public class Boss : Enemy
             {
                 foreach (Transform pos in Pattern2_Pos)
                 {
-                    Unit.Instance.SummonBullet(bullet, pos.transform.position, pos.eulerAngles, 20, 1, 30, player, 3);
+                    Unit.Instance.SummonBullet(bullet, pos.transform.position, pos.eulerAngles, 20, 1, 30, player);
                 }
                 yield return new WaitForSeconds(0.1f);
             }

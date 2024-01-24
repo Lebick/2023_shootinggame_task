@@ -9,9 +9,6 @@ public class Bullet : MonoBehaviour
 
     public  string  Atk_Obj_Tag;
 
-    public  float   Destroy_Wait_Time;
-    float   Destroy_Timer = 1;
-
     public  bool    isFollow;
     public  Color   BulletColor;
 
@@ -28,24 +25,25 @@ public class Bullet : MonoBehaviour
     void Update()
     {
 
-        Invoke("Bul_Destroy", Destroy_Wait_Time);
-
-        transform.Translate(0, 0, -Speed * Time.deltaTime);
+        transform.Translate(Vector3.back * Speed * Time.deltaTime);
 
 
-        if (!GetComponent<MeshRenderer>().isVisible)
+        if (!IsVisible())
         {
             Destroy(gameObject);
         }
     }
 
-    void Bul_Destroy()
+    public bool IsVisible()
     {
-        Destroy_Timer -= Time.deltaTime * 0.5f;
-        transform.localScale *= Destroy_Timer; //총알이 점점 작아지게 함
+        var viewPos = Camera.main.WorldToViewportPoint(transform.position);
 
-        if (Destroy_Timer <= 0)
-            Destroy(gameObject);
+        if (viewPos.x > 1.1f) return false;
+        if (viewPos.x < -0.1f) return false;
+        if (viewPos.y > 1.1f) return false;
+        if (viewPos.y < -0.1f) return false;
+
+        return true;
     }
 
     private void OnTriggerEnter(Collider other)

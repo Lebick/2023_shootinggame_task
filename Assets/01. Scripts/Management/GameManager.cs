@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour
 
     public  static  bool    GameStart;
 
+    public  static  bool    GameEnd;
+
     public  static  KeyCode AttackKey   = KeyCode.Space;
 
     public  static  float   time;
@@ -17,29 +19,40 @@ public class GameManager : MonoBehaviour
 
     public  static  int     Score;
 
+    public  static  GameManager Instance;
+
+    private void Awake()
+    {
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(gameObject);
+    }
+
     void Start()
     {
+        DontDestroyOnLoad(gameObject);
         time = 0;
         Kill_Enemy = 0;
     }
 
     void Update()
     {
-        switch (int.Parse(SceneManager.GetActiveScene().name[^1].ToString()))
+        switch (SceneManager.GetActiveScene().name[^1].ToString())
         {
-            case 1:
+            case "1":
                 Stage = 1;
+                time += Time.deltaTime;
                 break;
 
-            case 2:
+            case "2":
                 Stage = 2;
+                time += Time.deltaTime;
                 break;
 
             default:
                 Stage = 0;
                 break;
         }
-
-        time += Time.deltaTime;
     }
 }

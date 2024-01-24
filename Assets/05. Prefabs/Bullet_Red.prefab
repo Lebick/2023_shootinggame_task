@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: -466591532037234871}
   m_Layer: 0
   m_Name: Bullet_Red
-  m_TagString: Untagged
+  m_TagString: Bullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -114,7 +114,6 @@ MonoBehaviour:
   Speed: 20
   Damage: 0
   Atk_Obj_Tag: 
-  Destroy_Wait_Time: 0
   isFollow: 0
   BulletColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!54 &-466591532037234871

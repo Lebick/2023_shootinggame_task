@@ -15,7 +15,11 @@ public class Player : PlayerState
 
     public  GameObject  PlayerObj,
                         Axis,
-                        Bullet;
+                        Bullet,
+                        Bomb,
+                        Bomb_Effect;
+
+    GameObject bomb_copy;
 
     float   Ho_Rotation_Value,
             Ver_Rotation_Value;
@@ -50,8 +54,8 @@ public class Player : PlayerState
     {
         if (!GameManager.Pause)
         {
-            Horizontal = Input.GetAxisRaw("Horizontal");
-            Vertical = Input.GetAxisRaw("Vertical");
+            Horizontal = Input.GetAxis("Horizontal");
+            Vertical = Input.GetAxis("Vertical");
 
             Fuel -= Time.deltaTime * Fuel_Speed;
 
@@ -68,10 +72,9 @@ public class Player : PlayerState
 
     void Move()
     {
-        if(Horizontal != 0 || Vertical != 0)
-            transform.Translate(new Vector3(-Horizontal, 0, -Vertical) * Time.deltaTime * Movement_Speed);
+        transform.Translate(new Vector3(Horizontal, 0, Vertical) * Time.deltaTime * Movement_Speed, Space.World);
 
-        Ho_Rotation_Value = (Horizontal == 0) ? 0 : (Horizontal > 0) ? 40 : -40;
+        Ho_Rotation_Value = (Horizontal == 0) ? 0 : (Horizontal > 0) ? 20 : -20;
         Ver_Rotation_Value = (Vertical == 0) ? 0 : (Vertical > 0) ? -20 : 20;
 
         Quaternion rotate = Quaternion.Euler(Ver_Rotation_Value, 180, Ho_Rotation_Value);
@@ -79,10 +82,10 @@ public class Player : PlayerState
 
         var viewPos = Camera.main.WorldToViewportPoint(transform.position);
 
-        if (viewPos.x > 0.95f) viewPos.x = 0.95f;
-        if (viewPos.x < 0.05f) viewPos.x = 0.05f;
-        if (viewPos.y > 0.9f) viewPos.y = 0.9f;
-        if (viewPos.y < 0.1f) viewPos.y = 0.1f;
+        if (viewPos.x > 1) viewPos.x = 1;
+        if (viewPos.x < 0) viewPos.x = 0;
+        if (viewPos.y > 1) viewPos.y = 1;
+        if (viewPos.y < 0) viewPos.y = 0;
 
         var translatePos = Camera.main.ViewportToWorldPoint(viewPos);
 
@@ -104,13 +107,13 @@ public class Player : PlayerState
 
                 if(Atk_Level >= 0)
                 {
-                    Unit.Instance.SummonBullet(Bullet, transform.position, transform.eulerAngles, 10, 1, 110, "Enemy", 2);
+                    Unit.Instance.SummonBullet(Bullet, transform.position, transform.eulerAngles, 10, 1, 110, "Enemy");
                 }
 
                 if (Atk_Level >= 1)
                 {
-                    Unit.Instance.SummonBullet(Bullet, transform.position + new Vector3(1, 0, 0), transform.eulerAngles, 5, 0.5f, 90, "Enemy", 2);
-                    Unit.Instance.SummonBullet(Bullet, transform.position - new Vector3(1, 0, 0), transform.eulerAngles, 5, 0.5f, 90, "Enemy", 2);
+                    Unit.Instance.SummonBullet(Bullet, transform.position + new Vector3(1, 0, 0), transform.eulerAngles, 5, 0.5f, 90, "Enemy");
+                    Unit.Instance.SummonBullet(Bullet, transform.position - new Vector3(1, 0, 0), transform.eulerAngles, 5, 0.5f, 90, "Enemy");
                     Atk_CD_Timer -= 0.0033f;
                 }
 
@@ -119,8 +122,8 @@ public class Player : PlayerState
                     int fire = Random.Range(0, 3);
                     if(fire == 0)
                     {
-                        Unit.Instance.SummonBullet(Bullet, transform.position + new Vector3(1, 0, 0), transform.eulerAngles + new Vector3(0, 45, 0), 4, 0.6f, 90, "Enemy", 2);
-                        Unit.Instance.SummonBullet(Bullet, transform.position - new Vector3(1, 0, 0), transform.eulerAngles - new Vector3(0, 45, 0), 4, 0.6f, 90, "Enemy", 2);
+                        Unit.Instance.SummonBullet(Bullet, transform.position + new Vector3(1, 0, 0), transform.eulerAngles + new Vector3(0, 45, 0), 4, 0.6f, 90, "Enemy");
+                        Unit.Instance.SummonBullet(Bullet, transform.position - new Vector3(1, 0, 0), transform.eulerAngles - new Vector3(0, 45, 0), 4, 0.6f, 90, "Enemy");
                     }
                     Atk_CD_Timer -= 0.0033f;
                 }
@@ -153,6 +156,9 @@ public class Player : PlayerState
             if (Skill_2_Count < Skill_2_Max_Use)
             {
                 Skill_2_CD_timer = Skill_2_CD;
+                bomb_copy = Instantiate(Bomb, transform.position, Quaternion.identity);
+                bomb_copy.GetComponent<Rigidbody>().AddForce(Vector3.forward * 10 + Vector3.up * 10, ForceMode.Impulse);
+                
 
                 Skill_2_Count++;
             }
@@ -164,8 +170,37 @@ public class Player : PlayerState
             Skill_2_CD_timer -= Time.deltaTime;
         }
 
+        Bomb_Skill();
+
         Skill_1_CD_time = (Skill_1_CD - Skill_1_CD_timer) / Skill_1_CD;
         Skill_2_CD_time = (Skill_2_CD - Skill_2_CD_timer) / Skill_2_CD;
+    }
+
+    void Bomb_Skill()
+    {
+        if (bomb_copy != null && bomb_copy.transform.position.y <= -1) //∆¯≈∫ ∆¯πﬂ
+        {
+            GameObject Effect = Instantiate(Bomb_Effect, bomb_copy.transform.position, Quaternion.identity); //¿Ã∆Â∆Æ º“»Ø
+            Destroy(Effect, Effect.GetComponent<ParticleSystem>().main.startLifetime.constant); //¿Ã∆Â∆Æ Ω√∞£ ¥Ÿµ«∏È ªË¡¶
+            Destroy(bomb_copy); //∆¯≈∫ ªË¡¶
+
+            GameObject[] Enemys = GameObject.FindGameObjectsWithTag("Enemy");
+            GameObject[] Bullets = GameObject.FindGameObjectsWithTag("Bullet");
+            foreach (GameObject enemy in Enemys)
+            {
+                if (enemy.GetComponent<Enemy>())
+                    enemy.GetComponent<Enemy>().HP -= 100;
+
+                if (enemy.GetComponent<Boss>())
+                    enemy.GetComponent<Boss>().HP -= 100;
+            }
+
+            foreach (GameObject bul in Bullets)
+            {
+                if (bul.GetComponent<Bullet>().Atk_Obj_Tag == "Player")
+                    Destroy(bul);
+            }
+        }
     }
 
     void AlphaChange()

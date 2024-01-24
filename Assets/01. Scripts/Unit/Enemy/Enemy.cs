@@ -12,7 +12,6 @@ public enum EnemyType
 
 public class Enemy : MonoBehaviour
 {
-    bool            summon;
 
     public  float   Movement_Speed;
 
@@ -30,19 +29,30 @@ public class Enemy : MonoBehaviour
     public  GameObject      bullet;
 
     GameObject Player;
+    GameObject Axis;
 
     bool    PlayerJoin;
+
+    bool    wasVisible;
 
     int Count;
 
     void Start()
     {
         Player = GameObject.Find("Player");
+        Axis = transform.GetChild(0).gameObject;
 
         switch (Type)
         {
             case EnemyType.Meteor: //운석이라면
                 transform.LookAt(Player.transform.position);
+                break;
+
+            case EnemyType.Monster1:
+            case EnemyType.Monster2:
+                Vector3 lookDirection = Vector3.zero - transform.position;
+                transform.rotation = Quaternion.LookRotation(lookDirection);
+                transform.eulerAngles *= Random.Range(0.9f, 1.1f);
                 break;
         }
     }
@@ -50,71 +60,31 @@ public class Enemy : MonoBehaviour
 
     void Update()
     {
-        if (summon)
+        if (!GameManager.Pause)
         {
-            if (!GameManager.Pause)
-            {
-                Move();
+            Move();
 
+            if(IsVisible())
                 Attack();
-            }
-
-            if (HP <= 0)
-            {
-                GameManager.Score += MyScore;
-                Destroy(gameObject);
-            }
-
-            if (PlayerJoin)
-                AttackManager.Instance.Attack(Player, Damage);
         }
-        else
+
+        if (HP <= 0)
         {
-            Summon();
+            GameManager.Score += MyScore;
+            GameManager.Kill_Enemy++;
+            Destroy(gameObject);
         }
+
+        if (PlayerJoin)
+            AttackManager.Instance.Attack(Player, Damage);
+
+        if (!wasVisible)
+            wasVisible = IsVisible();
+
+        if (wasVisible != IsVisible())
+            Destroy(gameObject);
     }
 
-    void Summon()
-    {
-        switch (Type)
-        {
-            case EnemyType.Meteor: //운석이라면
-                summon = true;
-                break;
-
-            case EnemyType.Monster1: //적1 (눈쪽에서 총나가는 적)이라면
-                if (transform.position.y >= 0)
-                {
-                    summon = true;
-                    transform.position = new Vector3(transform.position.x,
-                                                     0,
-                                                     transform.position.z);
-                }
-                else
-                {
-                    transform.position = new Vector3(transform.position.x,
-                                                     Mathf.Lerp(transform.position.y, 20, Time.deltaTime),
-                                                     transform.position.z);
-                }
-                break;
-
-            case EnemyType.Monster2:
-                if (Camera.main.WorldToViewportPoint(transform.position).x <= 1 &&
-                Camera.main.WorldToViewportPoint(transform.position).x >= 0)
-                    summon = true;
-                else
-                {
-                    if (Camera.main.WorldToViewportPoint(transform.position).x >= 1)
-                        transform.rotation = Quaternion.Euler(0, -90, 0);
-                    
-                    if (Camera.main.WorldToViewportPoint(transform.position).x <= 0)
-                        transform.rotation = Quaternion.Euler(0, 90, 0);
-
-                    transform.Translate(0, 0, Movement_Speed * Time.deltaTime);
-                }
-                break;
-        }
-    }
 
     void Move()
     {
@@ -122,28 +92,23 @@ public class Enemy : MonoBehaviour
         {
             case EnemyType.Meteor: //운석이라면
                 transform.Translate(0, 0, Movement_Speed * Time.deltaTime); //이동
-                transform.GetChild(0).Rotate(Movement_Speed * 10 * Time.deltaTime, 0, 0); //빙글빙글 돌음
+                Axis.transform.Rotate(Movement_Speed * 10 * Time.deltaTime, 0, 0); //빙글빙글 돌음
                 break;
 
             case EnemyType.Monster1: //적1 (눈쪽에서 총나가는 적)이라면
-                Quaternion targetRotation = Quaternion.LookRotation(Player.transform.position - transform.position);
+
+                //축이 플레이어를 보게 함.
+                Quaternion targetRotation = Quaternion.LookRotation(Player.transform.position - Axis.transform.position);
                 targetRotation *= Quaternion.Euler(0, 180, 0);
-                transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, 10 * Time.deltaTime);
+                Axis.transform.rotation = Quaternion.Lerp(Axis.transform.rotation, targetRotation, 10 * Time.deltaTime);
+
+                //원본이 보는방향으로 이동함.
+                transform.Translate(0, 0, Movement_Speed * Time.deltaTime);
                 break;
 
             case EnemyType.Monster2:
-                if ((Camera.main.WorldToViewportPoint(transform.position).x >= 1f ||
-                    Camera.main.WorldToViewportPoint(transform.position).x <= 0f) && Count < 2)
-                {
-                    transform.eulerAngles *= -1;
-                    Count++;
-                }
                 transform.Translate(0, 0, Movement_Speed * Time.deltaTime); //이동
-                transform.GetChild(0).Rotate(0, Movement_Speed * 50 * Time.deltaTime, 0); //빙글빙글 돌음
-
-                if (Camera.main.WorldToViewportPoint(transform.position).x >= 1.2f ||
-                    Camera.main.WorldToViewportPoint(transform.position).x <= -0.2f)
-                    Destroy(gameObject);
+                Axis.transform.Rotate(0, Movement_Speed * 50 * Time.deltaTime, 0); //빙글빙글 돌음
                 break;
         }
     }
@@ -159,7 +124,7 @@ public class Enemy : MonoBehaviour
                     Atk_Timer -= Atk_CD;
                     foreach (Transform pos in BulletSpawnPos)
                     {
-                        Unit.Instance.SummonBullet(bullet, pos.position, transform.eulerAngles, 10, 1, 30, "Player");
+                        Unit.Instance.SummonBullet(bullet, pos.position, pos.eulerAngles, 10, 1, 30, "Player");
                     }
                 }
                 break;
@@ -172,11 +137,24 @@ public class Enemy : MonoBehaviour
                     Atk_Timer -= Atk_CD;
                     foreach (Transform pos in BulletSpawnPos)
                     {
-                        Unit.Instance.SummonBullet(bullet, pos.position, transform.GetChild(0).eulerAngles, 10, 0.5f, 20, "Player");
+                        Unit.Instance.SummonBullet(bullet, pos.position, Axis.transform.eulerAngles, 10, 0.5f, 20, "Player");
                     }
                 }
                 break;
         }
+    }
+
+
+    public bool IsVisible()
+    {
+        var viewPos = Camera.main.WorldToViewportPoint(transform.position);
+
+        if (viewPos.x > 1.1f) return false;
+        if (viewPos.x < -0.1f) return false;
+        if (viewPos.y > 1.1f) return false;
+        if (viewPos.y < -0.1f) return false;
+
+        return true;
     }
 
     private void OnTriggerEnter(Collider other)

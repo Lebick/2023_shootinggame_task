@@ -4,13 +4,11 @@ using UnityEngine;
 
 public class EnemySpawn : MonoBehaviour
 {
-    [Header("0 : Monster 1\n" +
-            "1 : Monster 2\n" +
-            "2 : Monster 3")]
-    public  Vector3[]   SpawnPoints_Center;
-    public  Vector3[]   SpawnPoints_Size;
+    public  Vector3     SpawnPoint_Center;
+    public  Vector3     SpawnPoint_Size;
 
     [SerializeField]    GameObject[]    Enemy;
+    [SerializeField]    GameObject[]    Boss;
 
     public  float       Spawn_CD;
 
@@ -20,32 +18,42 @@ public class EnemySpawn : MonoBehaviour
     {
         if (GameManager.GameStart)
         {
+            if(GameManager.time >= 90f)
+            {
+                Instantiate(Boss[GameManager.Stage - 1], new Vector3(0, -100, 20), Quaternion.identity);
+                Destroy(this);
+            }
+
             Spawn_timer += Time.deltaTime;
-            if(Spawn_timer >= Spawn_CD)
+            if (Spawn_timer >= Spawn_CD)
             {
                 Spawn_timer -= Spawn_CD;
-                
-                int enemy = Random.Range(0, SpawnPoints_Center.Length);
-                print(enemy);
 
-                Vector3 Range = new Vector3(Random.Range(SpawnPoints_Center[enemy].x - SpawnPoints_Size[enemy].x / 2, SpawnPoints_Center[enemy].x + SpawnPoints_Size[enemy].x / 2),
-                                            Random.Range(SpawnPoints_Center[enemy].y - SpawnPoints_Size[enemy].y / 2, SpawnPoints_Center[enemy].y + SpawnPoints_Size[enemy].y / 2),
-                                            Random.Range(SpawnPoints_Center[enemy].z - SpawnPoints_Size[enemy].z / 2, SpawnPoints_Center[enemy].z + SpawnPoints_Size[enemy].z / 2));
-                Instantiate(Enemy[enemy], Range, Quaternion.identity);
+                for(int i=0; i<Random.Range(1,4); i++) // 1~3È¸ ¼ÒÈ¯
+                {
+                    int enemy = Random.Range(0, Enemy.Length);
+                    Instantiate(Enemy[enemy], SpawnPoint(), Quaternion.identity);
+                }
             }
         }
     }
 
-    private void OnDrawGizmos()
+    Vector3 SpawnPoint()
     {
-        for(int i=0; i<SpawnPoints_Center.Length; i++)
-        {
-            Gizmos.color = i == 0 ? Color.red : 
-                           i == 1 ? Color.green : 
-                           i == 2 ? Color.blue :
-                           Color.white;
+        float radius = 60f;
+        float yOffset = 30f;
 
-            Gizmos.DrawCube(SpawnPoints_Center[i], SpawnPoints_Size[i]);
+        while (true)
+        {
+            float randomAngle = Random.Range(0f, 2f * Mathf.PI);
+
+            float x = radius * Mathf.Cos(randomAngle);
+            float y = radius * Mathf.Sin(randomAngle) + yOffset;
+
+            if (y > 20)
+            {
+                return new Vector3(x, 0, y);
+            }
         }
     }
 }
