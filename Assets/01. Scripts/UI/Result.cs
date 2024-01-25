@@ -26,8 +26,9 @@ public class Result : MonoBehaviour
     }
 
 
-    public IEnumerator Result_Show()
+    public IEnumerator Result_Show(float WaitTime = 0)
     {
+        yield return new WaitForSeconds(WaitTime);
         Result_Text[0].text     = $"Stage {GameManager.Stage} Result";
         Result_Text[1].text     = $"HP : {(1 - (PlayerState.Max_HP - PlayerState.HP) / PlayerState.Max_HP) * 100}%";
         Result_Text[2].text     = $"Time :  {(int)(GameManager.time / 60)}:{(int)(GameManager.time % 60)}";

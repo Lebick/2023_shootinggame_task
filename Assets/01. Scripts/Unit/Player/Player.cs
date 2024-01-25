@@ -65,7 +65,7 @@ public class Player : PlayerState
 
             Skill();
 
-            AlphaChange();
+            StartCoroutine(AlphaChange());
         }
     }
 
@@ -103,17 +103,17 @@ public class Player : PlayerState
         {
             if (Input.GetKey(GameManager.AttackKey))
             {
-                Atk_CD_Timer += 0.2f;
+                Atk_CD_Timer += 0.1f;
 
                 if(Atk_Level >= 0)
                 {
-                    Unit.Instance.SummonBullet(Bullet, transform.position, transform.eulerAngles, 10, 1, 110, "Enemy");
+                    Unit.Instance.SummonBullet(Bullet, transform.position, transform.eulerAngles, 10, 1, 150, "Enemy");
                 }
 
                 if (Atk_Level >= 1)
                 {
-                    Unit.Instance.SummonBullet(Bullet, transform.position + new Vector3(1, 0, 0), transform.eulerAngles, 5, 0.5f, 90, "Enemy");
-                    Unit.Instance.SummonBullet(Bullet, transform.position - new Vector3(1, 0, 0), transform.eulerAngles, 5, 0.5f, 90, "Enemy");
+                    Unit.Instance.SummonBullet(Bullet, transform.position + new Vector3(1, 0, 0), transform.eulerAngles, 5, 0.5f, 120, "Enemy");
+                    Unit.Instance.SummonBullet(Bullet, transform.position - new Vector3(1, 0, 0), transform.eulerAngles, 5, 0.5f, 120, "Enemy");
                     Atk_CD_Timer -= 0.0033f;
                 }
 
@@ -189,43 +189,52 @@ public class Player : PlayerState
             foreach (GameObject enemy in Enemys)
             {
                 if (enemy.GetComponent<Enemy>())
-                    enemy.GetComponent<Enemy>().HP -= 100;
+                    enemy.GetComponent<Enemy>().HP -= 100; //일반 적 HP 감소
 
-                if (enemy.GetComponent<Boss>())
-                    enemy.GetComponent<Boss>().HP -= 100;
+                if (enemy.GetComponent<Stage1_Boss>())
+                    enemy.GetComponent<Stage1_Boss>().HP -= 100; //보스 HP 감소
+
+                if (enemy.GetComponent<Stage2_Boss>())
+                    enemy.GetComponent<Stage2_Boss>().HP -= 100; //보스 HP 감소
             }
 
             foreach (GameObject bul in Bullets)
             {
-                if (bul.GetComponent<Bullet>().Atk_Obj_Tag == "Player")
-                    Destroy(bul);
+                if (bul.GetComponent<Bullet>().Atk_Obj_Tag == "Player") //플레이어를 목표로 하는 탄환
+                    Destroy(bul); //제거
             }
+
+            Cam_Effect.Instance.StartCoroutine(Cam_Effect.Instance.Cam_Shake(5, 0.5f));
         }
     }
 
-    void AlphaChange()
+    IEnumerator AlphaChange()
     {
         if (Invincibility)
         {
-            Invincibility_Timer += Time.deltaTime;
-            foreach (Material met in Player_Met)
+            while(Invincibility_Timer <= Invincibility_Time)
             {
-                met.color = new Color(met.color.r, met.color.g, met.color.b, Mathf.Lerp(met.color.a, Alpha, Time.deltaTime * 10));
-                if (met.color.a <= 0.2f)
-                    Alpha = 1;
-                if (met.color.a >= 0.8f)
-                    Alpha = 0;
-            }
-
-            if (Invincibility_Timer >= Invincibility_Time)
-            {
-                Invincibility = false;
+                Invincibility_Timer += Time.deltaTime;
                 foreach (Material met in Player_Met)
                 {
+                    met.color = new Color(met.color.r, met.color.g, met.color.b, 0);
+
+                    yield return new WaitForSeconds(0.2f);
+
                     met.color = new Color(met.color.r, met.color.g, met.color.b, 1);
+
+                    yield return new WaitForSeconds(0.2f);
                 }
-                Invincibility_Timer = 0;
+                yield return null;
             }
+
+            Invincibility = false;
+            foreach (Material met in Player_Met)
+            {
+                met.color = new Color(met.color.r, met.color.g, met.color.b, 1);
+            }
+            Invincibility_Timer = 0;
+
         }
     }
 }

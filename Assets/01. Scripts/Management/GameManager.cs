@@ -32,8 +32,6 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         DontDestroyOnLoad(gameObject);
-        time = 0;
-        Kill_Enemy = 0;
     }
 
     void Update()

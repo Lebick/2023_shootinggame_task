@@ -86,6 +86,7 @@ public class SceneLoadManager : MonoBehaviour
         sc.allowSceneActivation = false;
 
         GameManager.Pause = true;
+        GameManager.time = 0;
         Fading = true;
     }
 

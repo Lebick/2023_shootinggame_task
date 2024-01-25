@@ -15,7 +15,7 @@ public class Unit : MonoBehaviour
     }
 
 
-    public void SummonBullet(GameObject bullet, Vector3 position, Vector3 rotation, float damage, float size, float speed, string tag, bool follow = false)
+    public void SummonBullet(GameObject bullet, Vector3 position, Vector3 rotation, float damage, float size, float speed, string tag, float destroy_time = 10)
     {
         GameObject bul = Instantiate(bullet, position, Quaternion.Euler(rotation));
         Bullet bul_info = bul.GetComponent<Bullet>();
@@ -23,7 +23,7 @@ public class Unit : MonoBehaviour
         bul_info.Damage = damage;
         bul_info.Atk_Obj_Tag = tag;
         bul_info.Speed = speed;
-        bul_info.isFollow = follow;
+        bul_info.Destroy_Time = destroy_time;
         bul.transform.localScale = Vector3.one * size;
 
     }

@@ -7,6 +7,7 @@ public enum EnemyType
     Meteor,
     Monster1,
     Monster2,
+    Monster3,
     Boss
 }
 
@@ -26,7 +27,8 @@ public class Enemy : MonoBehaviour
     public  EnemyType   Type;
 
     public  Transform[]     BulletSpawnPos;
-    public  GameObject      bullet;
+    public  GameObject      bullet,
+                            Death_Effect;
 
     GameObject Player;
     GameObject Axis;
@@ -72,6 +74,8 @@ public class Enemy : MonoBehaviour
         {
             GameManager.Score += MyScore;
             GameManager.Kill_Enemy++;
+            GameObject Effect = Instantiate(Death_Effect, transform.position, Death_Effect.transform.rotation); //이펙트 소환
+            Destroy(Effect, Effect.GetComponent<ParticleSystem>().main.startLifetime.constant); //이펙트 시간 다되면 삭제
             Destroy(gameObject);
         }
 
@@ -88,6 +92,10 @@ public class Enemy : MonoBehaviour
 
     void Move()
     {
+        //플레이어를 보게하는 회전값
+        Quaternion targetRotation = Quaternion.LookRotation(Player.transform.position - Axis.transform.position);
+        targetRotation *= Quaternion.Euler(0, 180, 0);
+
         switch (Type)
         {
             case EnemyType.Meteor: //운석이라면
@@ -96,10 +104,7 @@ public class Enemy : MonoBehaviour
                 break;
 
             case EnemyType.Monster1: //적1 (눈쪽에서 총나가는 적)이라면
-
                 //축이 플레이어를 보게 함.
-                Quaternion targetRotation = Quaternion.LookRotation(Player.transform.position - Axis.transform.position);
-                targetRotation *= Quaternion.Euler(0, 180, 0);
                 Axis.transform.rotation = Quaternion.Lerp(Axis.transform.rotation, targetRotation, 10 * Time.deltaTime);
 
                 //원본이 보는방향으로 이동함.
@@ -109,6 +114,13 @@ public class Enemy : MonoBehaviour
             case EnemyType.Monster2:
                 transform.Translate(0, 0, Movement_Speed * Time.deltaTime); //이동
                 Axis.transform.Rotate(0, Movement_Speed * 50 * Time.deltaTime, 0); //빙글빙글 돌음
+                break;
+
+            case EnemyType.Monster3:
+                //플레이어를 바라봄
+                transform.rotation = Quaternion.Lerp(Axis.transform.rotation, targetRotation, 2 * Time.deltaTime);
+                //바라보는 방향으로 이동
+                transform.Translate(0, 0, -Movement_Speed * Time.deltaTime);
                 break;
         }
     }
@@ -138,6 +150,19 @@ public class Enemy : MonoBehaviour
                     foreach (Transform pos in BulletSpawnPos)
                     {
                         Unit.Instance.SummonBullet(bullet, pos.position, Axis.transform.eulerAngles, 10, 0.5f, 20, "Player");
+                    }
+                }
+                break;
+
+
+            case EnemyType.Monster3: //적3 이라면
+                Atk_Timer += Time.deltaTime;
+                if (Atk_Timer >= Atk_CD)
+                {
+                    Atk_Timer -= Atk_CD;
+                    foreach (Transform pos in BulletSpawnPos)
+                    {
+                        Unit.Instance.SummonBullet(bullet, pos.position, Axis.transform.eulerAngles, 5, 0.5f, 0, "Player", 5);
                     }
                 }
                 break;

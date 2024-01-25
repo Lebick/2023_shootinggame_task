@@ -9,29 +9,19 @@ public class Bullet : MonoBehaviour
 
     public  string  Atk_Obj_Tag;
 
-    public  bool    isFollow;
-    public  Color   BulletColor;
+    public  float   Destroy_Time;
 
-    void Start()
-    {
-        if (isFollow)
-        {
-            transform.LookAt(GameObject.FindGameObjectWithTag(Atk_Obj_Tag).transform.position);
-            transform.Rotate(0, 180, 0);
-            isFollow = false;
-        }
-    }
 
     void Update()
     {
-
         transform.Translate(Vector3.back * Speed * Time.deltaTime);
-
 
         if (!IsVisible())
         {
             Destroy(gameObject);
         }
+
+        Invoke(nameof(Bullet_Destroy), Destroy_Time);
     }
 
     public bool IsVisible()
@@ -46,8 +36,21 @@ public class Bullet : MonoBehaviour
         return true;
     }
 
+    void Bullet_Destroy()
+    {
+        transform.localScale *= 0.9f;
+
+        if(transform.localScale.x <= 0)
+            Destroy(gameObject);
+    }
+
     private void OnTriggerEnter(Collider other)
     {
+        if (other.CompareTag("Guard"))
+        {
+            Destroy(gameObject);
+        }
+
         if (other.CompareTag(Atk_Obj_Tag))
         {
             AttackManager.Instance.Attack(other.gameObject, Damage);

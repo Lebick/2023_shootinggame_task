@@ -20,7 +20,7 @@ public class EnemySpawn : MonoBehaviour
         {
             if(GameManager.time >= 90f)
             {
-                Instantiate(Boss[GameManager.Stage - 1], new Vector3(0, -100, 20), Quaternion.identity);
+                Instantiate(Boss[GameManager.Stage - 1], new Vector3(0, 0, 60), Quaternion.identity);
                 Destroy(this);
             }
 
