@@ -24,8 +24,6 @@ public class Player : PlayerState
     float   Ho_Rotation_Value,
             Ver_Rotation_Value;
 
-    public  Material[]  Player_Met;
-
     float   Atk_CD_Timer,
             Invincibility_Timer;
 
@@ -45,8 +43,6 @@ public class Player : PlayerState
     void Start()
     {
         StateReset();
-
-        Player_Met = PlayerObj.GetComponent<MeshRenderer>().materials;
     }
 
     
@@ -65,7 +61,8 @@ public class Player : PlayerState
 
             Skill();
 
-            StartCoroutine(AlphaChange());
+            if(Invincibility && Invincibility_Timer == 0)
+                StartCoroutine(AlphaChange());
         }
     }
 
@@ -210,31 +207,21 @@ public class Player : PlayerState
 
     IEnumerator AlphaChange()
     {
-        if (Invincibility)
+        while (Invincibility_Timer <= Invincibility_Time)
         {
-            while(Invincibility_Timer <= Invincibility_Time)
-            {
-                Invincibility_Timer += Time.deltaTime;
-                foreach (Material met in Player_Met)
-                {
-                    met.color = new Color(met.color.r, met.color.g, met.color.b, 0);
+            Invincibility_Timer += Time.deltaTime;
 
-                    yield return new WaitForSeconds(0.2f);
+            PlayerObj.SetActive(false);
+            yield return new WaitForSecondsRealtime(0.1f);
+            Invincibility_Timer += 0.1f;
 
-                    met.color = new Color(met.color.r, met.color.g, met.color.b, 1);
-
-                    yield return new WaitForSeconds(0.2f);
-                }
-                yield return null;
-            }
-
-            Invincibility = false;
-            foreach (Material met in Player_Met)
-            {
-                met.color = new Color(met.color.r, met.color.g, met.color.b, 1);
-            }
-            Invincibility_Timer = 0;
-
+            PlayerObj.SetActive(true);
+            yield return new WaitForSecondsRealtime(0.1f);
+            Invincibility_Timer += 0.1f;
         }
+
+
+        Invincibility = false;
+        Invincibility_Timer = 0;
     }
 }
