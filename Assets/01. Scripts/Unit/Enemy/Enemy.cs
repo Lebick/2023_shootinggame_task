@@ -8,7 +8,8 @@ public enum EnemyType
     Monster1,
     Monster2,
     Monster3,
-    Boss
+    Boss,
+    BossEnemy1
 }
 
 public class Enemy : MonoBehaviour
@@ -42,7 +43,8 @@ public class Enemy : MonoBehaviour
     void Start()
     {
         Player = GameObject.Find("Player");
-        Axis = transform.GetChild(0).gameObject;
+        if (Type != EnemyType.Boss)
+            Axis = transform.GetChild(0).gameObject;
 
         switch (Type)
         {
@@ -62,31 +64,35 @@ public class Enemy : MonoBehaviour
 
     void Update()
     {
-        if (!GameManager.Pause)
+        if (Type != EnemyType.Boss)
         {
-            Move();
+            if (!GameManager.Pause)
+            {
+                Move();
 
-            if(IsVisible())
-                Attack();
+                if (IsVisible())
+                    Attack();
+            }
+
+            if (HP <= 0)
+            {
+                GameManager.Score += MyScore;
+                GameManager.Kill_Enemy++;
+                GameObject Effect = Instantiate(Death_Effect, transform.position, Death_Effect.transform.rotation); //이펙트 소환
+                Destroy(Effect, Effect.GetComponent<ParticleSystem>().main.startLifetime.constant); //이펙트 시간 다되면 삭제
+                Destroy(gameObject);
+            }
+
+            if (!wasVisible)
+                wasVisible = IsVisible();
+
+            if (wasVisible != IsVisible())
+                Destroy(gameObject);
         }
 
-        if (HP <= 0)
-        {
-            GameManager.Score += MyScore;
-            GameManager.Kill_Enemy++;
-            GameObject Effect = Instantiate(Death_Effect, transform.position, Death_Effect.transform.rotation); //이펙트 소환
-            Destroy(Effect, Effect.GetComponent<ParticleSystem>().main.startLifetime.constant); //이펙트 시간 다되면 삭제
-            Destroy(gameObject);
-        }
 
         if (PlayerJoin)
             AttackManager.Instance.Attack(Player, Damage);
-
-        if (!wasVisible)
-            wasVisible = IsVisible();
-
-        if (wasVisible != IsVisible())
-            Destroy(gameObject);
     }
 
 
@@ -118,9 +124,17 @@ public class Enemy : MonoBehaviour
 
             case EnemyType.Monster3:
                 //플레이어를 바라봄
-                transform.rotation = Quaternion.Lerp(Axis.transform.rotation, targetRotation, 2 * Time.deltaTime);
+                transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, 2 * Time.deltaTime);
                 //바라보는 방향으로 이동
                 transform.Translate(0, 0, -Movement_Speed * Time.deltaTime);
+                break;
+
+            case EnemyType.BossEnemy1:
+                if (transform.position.z >= 50)
+                    transform.position += Time.deltaTime * Vector3.back * Movement_Speed;
+
+                if (transform.position.x >= 45)
+                    transform.position += Time.deltaTime * Vector3.left * Movement_Speed;
                 break;
         }
     }
@@ -164,6 +178,15 @@ public class Enemy : MonoBehaviour
                     {
                         Unit.Instance.SummonBullet(bullet, pos.position, Axis.transform.eulerAngles, 5, 0.5f, 0, "Player", 5);
                     }
+                }
+                break;
+
+            case EnemyType.BossEnemy1:
+                Atk_Timer += Time.deltaTime;
+                if (Atk_Timer >= Atk_CD)
+                {
+                    Atk_Timer -= Atk_CD;
+                    Unit.Instance.SummonBullet(bullet, Axis.transform.position, Axis.transform.eulerAngles, 10, 0.5f, 20, "Player", 5);
                 }
                 break;
         }

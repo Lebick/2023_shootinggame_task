@@ -46,20 +46,16 @@ public class Stage1_Boss : Enemy
 
                 if (HP <= 0)
                 {
+                    isDeath = true;
                     GameManager.Score += MyScore;
                     Cam_Effect.Instance.StartCoroutine(Cam_Effect.Instance.Cam_Shake(10, 3));
-                    Invoke("Death", 3);
-                    isDeath = true;
+                    Invoke(nameof(Death), 3);
+                    StopCoroutine($"Pattern{Now_Pattern}");
                 }
             }
             else
                 Summon();
         }
-        else
-        {
-            StopCoroutine($"Pattern{Now_Pattern}");
-        }
-        
     }
 
     void Death()
@@ -90,7 +86,8 @@ public class Stage1_Boss : Enemy
                 foreach (Transform pos in BulletSpawnPos)
                 {
                     pos.LookAt(player_obj.transform.position);
-                    Unit.Instance.SummonBullet(bullet, pos.transform.position, Vector3.zero, 20, 1, 80, player);
+                    pos.rotation *= Quaternion.Euler(0, 180, 0);
+                    Unit.Instance.SummonBullet(bullet, pos.transform.position, pos.eulerAngles, 20, 1, 80, player);
                 }
                 yield return new WaitForSecondsRealtime(0.1f);
             }

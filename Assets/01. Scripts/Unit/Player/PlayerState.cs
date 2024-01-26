@@ -33,11 +33,11 @@ public class PlayerState : MonoBehaviour
 
 
 
-    public void StateReset()
+    public static void StateReset()
     {
         Skill_1_Count = 0;
         Skill_2_Count = 0;
-        Skill_1_CD_timer = Skill_1_CD;
-        Skill_2_CD_timer = Skill_2_CD;
+        Skill_1_CD_timer = 0;
+        Skill_2_CD_timer = 0;
     }
 }

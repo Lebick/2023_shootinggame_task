@@ -79,8 +79,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43e6c67f8f3e54d488830ab93e4193ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Skill_1_CD: 1
-  Skill_2_CD: 1
+  Skill_1_CD: 5
+  Skill_2_CD: 10
   Movement_Speed: 20
   Fuel_Speed: 5
   Invincibility_Time: 1
@@ -89,7 +89,6 @@ MonoBehaviour:
   Bullet: {fileID: 8329294674428431637, guid: a04603248cb57cd43ab92770906e6b93, type: 3}
   Bomb: {fileID: 5672600419493095717, guid: f5c0645e52156524c88dd9a107ae4a59, type: 3}
   Bomb_Effect: {fileID: 3518829363990962883, guid: de25cd5675a17c94fa38bcd2222bbecc, type: 3}
-  Player_Met: []
 --- !u!65 &718757996980183564
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -182,6 +181,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 34816123dde420c44b06d954ffa13654, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 9beade8d65c7b674896a654b0a7212d6, type: 2}
+    - target: {fileID: -7511558181221131132, guid: 34816123dde420c44b06d954ffa13654, type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: 8751a5981179eca4fa85f14a33adee0e, type: 2}
+    - target: {fileID: -7511558181221131132, guid: 34816123dde420c44b06d954ffa13654, type: 3}
+      propertyPath: m_Materials.Array.data[2]
+      value: 
+      objectReference: {fileID: 2100000, guid: c529a31f3f08a8e4a927dd367e22f3f8, type: 2}
     - target: {fileID: 919132149155446097, guid: 34816123dde420c44b06d954ffa13654, type: 3}
       propertyPath: m_Name
       value: SpaceShip

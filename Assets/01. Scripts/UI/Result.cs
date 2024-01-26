@@ -46,10 +46,18 @@ public class Result : MonoBehaviour
         yield return new WaitForSeconds(2f);
 
         if(GameManager.Stage == 1)
+        {
             SceneLoadManager.Instance.SceneLoad(SceneNames.Stage2);
+            PlayerState.StateReset();
+        }
+
 
         if (GameManager.Stage == 2)
+        {
             SceneLoadManager.Instance.SceneLoad(SceneNames.Ranking);
+            GameManager.GameEnd = true;
+            Destroy(GameObject.FindGameObjectWithTag("Player"), 1);
+        }
 
     }
 }

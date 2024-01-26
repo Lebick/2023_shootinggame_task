@@ -60,9 +60,9 @@ public class CheatManager : MonoBehaviour
     private void CheatAction3()
     {
         PlayerState.Skill_1_CD_timer = 0;
-        PlayerState.Skill_1_Count = 5;
+        PlayerState.Skill_1_Count = 0;
         PlayerState.Skill_2_CD_timer = 0;
-        PlayerState.Skill_2_Count = 5;
+        PlayerState.Skill_2_Count = 0;
     }
 
     //내구도 초기화

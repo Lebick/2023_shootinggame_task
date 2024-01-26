@@ -92,7 +92,6 @@ public class Ranking : MonoBehaviour
         {
             data = new RankingData();
         }
-
         UIUpdate();
     }
 
@@ -115,6 +114,7 @@ public class Ranking : MonoBehaviour
 
     void UIUpdate()
     {
+        Data_Sort();
         Ranking_List.text = string.Empty;
 
         for (int i=0; i<5; i++)
@@ -123,6 +123,26 @@ public class Ranking : MonoBehaviour
                 Ranking_List.text += $"{i+1} .... {data.Name[i]} : {data.Score[i]}\n";
             else
                 Ranking_List.text += $"{i+1} .... 등록된 정보 없음\n";
+        }
+    }
+
+    void Data_Sort()
+    {
+        for (int i = 0; i < data.Score.Count; i++)
+        {
+            for (int j = 0; j < data.Score.Count; j++)
+            {
+                if (int.Parse(data.Score[i].ToString()) > int.Parse(data.Score[j].ToString()))
+                {
+                    string copy = data.Score[i];
+                    data.Score[i] = data.Score[j];
+                    data.Score[j] = copy;
+
+                    string copy2 = data.Name[i];
+                    data.Name[i] = data.Name[j];
+                    data.Name[j] = copy2;
+                }
+            }
         }
     }
 }

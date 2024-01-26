@@ -24,6 +24,12 @@ public class Stage2_Boss : Enemy
                      private Transform[] Pattern0_Pos;
 
     [SerializeField] private GameObject Pattern1_Warning_Effect;
+    [SerializeField] private GameObject Pattern1_Range;
+
+    [SerializeField] private GameObject Pattern2_Enemy;
+
+    [SerializeField] private GameObject[] bullets;
+    [SerializeField] private GameObject Bomb;
 
     private void Start()
     {
@@ -33,6 +39,8 @@ public class Stage2_Boss : Enemy
         Guard = Obj_Axis.transform.Find("Guard_Axis").gameObject;
 
         Eye_Met = Eye.transform.Find("Eye").GetComponent<MeshRenderer>().materials;
+
+        Pattern0_Pos = Pattern0_Axis.GetComponentsInChildren<Transform>(true);
     }
 
     void Update()
@@ -41,8 +49,6 @@ public class Stage2_Boss : Enemy
         {
             if (isSummon)
             {
-                Eye.transform.LookAt(player_obj.transform.position);
-
                 if (!Patterning)
                 {
                     Patterning = true;
@@ -53,26 +59,22 @@ public class Stage2_Boss : Enemy
                     }
 
                     Now_Pattern = Pattern;
-                    //StartCoroutine($"Pattern{Now_Pattern}");
-                    StartCoroutine($"Pattern1");
+                    StartCoroutine($"Pattern{Now_Pattern}");
+                    //StartCoroutine($"Pattern2");
                 }
 
                 if (HP <= 0)
                 {
+                    isDeath = true;
                     GameManager.Score += MyScore;
                     Cam_Effect.Instance.StartCoroutine(Cam_Effect.Instance.Cam_Shake(10, 3));
-                    Invoke("Death", 3);
-                    isDeath = true;
+                    Invoke(nameof(Death), 3);
+                    StopCoroutine($"Pattern{Now_Pattern}");
                 }
             }
             else
                 Summon();
         }
-        else
-        {
-            StopCoroutine($"Pattern{Now_Pattern}");
-        }
-        
     }
 
     void Death()
@@ -93,14 +95,10 @@ public class Stage2_Boss : Enemy
         }
     }
 
+    //자신의 갑옷을 굴리며 파편을 튀게함.
     IEnumerator Pattern0()
     {
-        if (Pattern0_Pos == null) //자식오브젝트 위치 안받아온상태면
-        {
-            Pattern0_Pos = Pattern0_Axis.GetComponentsInChildren<Transform>(true);
-        }
-
-        StartCoroutine(Pattern0_Atk());
+        StartCoroutine(Pattern0_1_Atk(bullet));
         float timer = 0;
         while (timer <= 5f)
         {
@@ -124,33 +122,12 @@ public class Stage2_Boss : Enemy
         Patterning = false;
     }
 
-    IEnumerator Pattern0_Atk()
-    {
-        float timer = 0;
-        while (timer <= 5)
-        {
-            timer += Time.deltaTime;
 
-            for (int i = 0; i < 15; i++)
-            {
-                foreach (Transform pos in Pattern0_Pos)
-                {
-                    Unit.Instance.SummonBullet(bullet, pos.transform.position, pos.eulerAngles, 20, 1, 20, player);
-                }
-                yield return new WaitForSecondsRealtime(0.05f);
-                timer += 0.05f;
-                Pattern0_Axis.transform.Rotate(0, Random.Range(0, 180), 0);
-            }
-        }
-
-        yield return null;
-    }
-
-
+    //일정시간동안 플레이어에게 유도되다가 레이저를 쏨
     IEnumerator Pattern1()
     {
         float wait_time = 2.0f;
-        ParticleSystem.MainModule Duration = Pattern1_Warning_Effect.GetComponent<ParticleSystem>().main;
+        ParticleSystem.MainModule Effect = Pattern1_Warning_Effect.GetComponent<ParticleSystem>().main;
 
         float timer = 0;
         while (timer <= 3)
@@ -167,22 +144,38 @@ public class Stage2_Boss : Enemy
         {
             wait_time -= 0.35f;
 
-            Duration.duration = wait_time;
+            Effect.duration = wait_time;
+            Effect.startColor = new Color(1, 0, 0, 0.2f);
             timer = 0;
             Pattern1_Warning_Effect.SetActive(true);
             while (timer <= wait_time + 0.2f)
             {
-                transform.LookAt(player_obj.transform.position);
-                transform.rotation *= Quaternion.Euler(0, 180, 0);
+                Quaternion targetRotation = Quaternion.LookRotation(player_obj.transform.position - transform.position);
+                targetRotation *= Quaternion.Euler(0, 180, 0);
+
+                transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, 2 * Time.deltaTime);
                 timer += Time.deltaTime;
 
                 yield return null;
             }
             Pattern1_Warning_Effect.SetActive(false);
-            //레이저 발사 << 해야됨 나중에 꼭 까먹지 마라
-            Cam_Effect.Instance.StartCoroutine(Cam_Effect.Instance.Cam_Shake(10, 0.5f));
+            yield return new WaitForSecondsRealtime(0.3f);
+
+            Effect.duration = wait_time * 0.25f;
+            Effect.startColor = new Color(1, 0, 0, 1f);
+            Pattern1_Warning_Effect.SetActive(true);
+
+            Pattern1_Range.SetActive(true);
+
+            Cam_Effect.Instance.StartCoroutine(Cam_Effect.Instance.Cam_Shake(3, wait_time * 0.25f));
+
+            StartCoroutine(Pattern0_1_Atk(bullets[0], wait_time * 0.25f, 4));
 
             yield return new WaitForSecondsRealtime(wait_time * 0.25f);
+
+            Pattern1_Warning_Effect.SetActive(false);
+            Pattern1_Range.SetActive(false);
+
         }
 
         while (timer <= 1)
@@ -199,8 +192,40 @@ public class Stage2_Boss : Enemy
         yield return null;
     }
 
+
+    IEnumerator Pattern0_1_Atk(GameObject bul, float time = 5, float amount = 15)
+    {
+        float timer = 0;
+        while (timer <= time)
+        {
+            timer += Time.deltaTime;
+
+            for (int i = 0; i < amount; i++)
+            {
+                foreach (Transform pos in Pattern0_Pos)
+                {
+                    Unit.Instance.SummonBullet(bul, pos.transform.position, pos.eulerAngles, 20, 1, 20, player);
+                }
+                yield return new WaitForSecondsRealtime(0.05f);
+                timer += 0.05f;
+                Pattern0_Axis.transform.Rotate(0, Random.Range(0, 180), 0);
+            }
+        }
+
+        yield return null;
+    }
+
+
+    //플레이어의 움직임을 제한할 적 소환
     IEnumerator Pattern2()
     {
+        Instantiate(Pattern2_Enemy, new Vector3(Random.Range(25, 50), 0, 60), Quaternion.identity);
+        Instantiate(Pattern2_Enemy, new Vector3(Random.Range(-50, -25), 0, 60), Quaternion.identity);
+        Cam_Effect.Instance.StartCoroutine(Cam_Effect.Instance.Cam_Shake(5, 2));
+
+        yield return new WaitForSecondsRealtime(3f);
+
+        Patterning = false;
         yield return null;
     }
 

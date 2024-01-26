@@ -40,11 +40,6 @@ public class Player : PlayerState
             Destroy(gameObject);
     }
 
-    void Start()
-    {
-        StateReset();
-    }
-
     
     void Update()
     {
@@ -69,24 +64,27 @@ public class Player : PlayerState
 
     void Move()
     {
-        transform.Translate(new Vector3(Horizontal, 0, Vertical) * Time.deltaTime * Movement_Speed, Space.World);
+        if(Horizontal != 0 || Vertical != 0)
+        {
+            transform.Translate(new Vector3(Horizontal, 0, Vertical) * Time.deltaTime * Movement_Speed, Space.World);
 
-        Ho_Rotation_Value = (Horizontal == 0) ? 0 : (Horizontal > 0) ? 20 : -20;
-        Ver_Rotation_Value = (Vertical == 0) ? 0 : (Vertical > 0) ? -20 : 20;
+            Ho_Rotation_Value = (Horizontal == 0) ? 0 : (Horizontal > 0) ? 20 : -20;
+            Ver_Rotation_Value = (Vertical == 0) ? 0 : (Vertical > 0) ? -20 : 20;
 
-        Quaternion rotate = Quaternion.Euler(Ver_Rotation_Value, 180, Ho_Rotation_Value);
-        Axis.transform.rotation = Quaternion.Lerp(Axis.transform.rotation, rotate, 2 * Time.deltaTime);
+            Quaternion rotate = Quaternion.Euler(Ver_Rotation_Value, 180, Ho_Rotation_Value);
+            Axis.transform.rotation = Quaternion.Lerp(Axis.transform.rotation, rotate, 2 * Time.deltaTime);
 
-        var viewPos = Camera.main.WorldToViewportPoint(transform.position);
+            var viewPos = Camera.main.WorldToViewportPoint(transform.position);
 
-        if (viewPos.x > 1) viewPos.x = 1;
-        if (viewPos.x < 0) viewPos.x = 0;
-        if (viewPos.y > 1) viewPos.y = 1;
-        if (viewPos.y < 0) viewPos.y = 0;
+            if (viewPos.x > 1) viewPos.x = 1;
+            if (viewPos.x < 0) viewPos.x = 0;
+            if (viewPos.y > 1) viewPos.y = 1;
+            if (viewPos.y < 0) viewPos.y = 0;
 
-        var translatePos = Camera.main.ViewportToWorldPoint(viewPos);
+            var translatePos = Camera.main.ViewportToWorldPoint(viewPos);
 
-        transform.position = new Vector3(translatePos.x, transform.position.y, translatePos.z);
+            transform.position = new Vector3(translatePos.x, transform.position.y, translatePos.z);
+        }
     }
 
 
