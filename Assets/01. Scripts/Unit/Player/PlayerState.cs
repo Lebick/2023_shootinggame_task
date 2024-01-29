@@ -50,5 +50,6 @@ public class PlayerState : MonoBehaviour
         Skill_2_Count = 0;
         Skill_1_CD_timer = 0;
         Skill_2_CD_timer = 0;
+        Invincibility = false;
     }
 }

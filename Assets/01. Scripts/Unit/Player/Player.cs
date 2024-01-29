@@ -17,7 +17,8 @@ public class Player : PlayerState
                         Axis,
                         Bullet,
                         Bomb,
-                        Bomb_Effect;
+                        Bomb_Effect,
+                        Death_Effect;
 
     GameObject bomb_copy;
 
@@ -37,6 +38,8 @@ public class Player : PlayerState
         }
         else
             Destroy(gameObject);
+
+        StateReset();
     }
 
     
@@ -44,19 +47,40 @@ public class Player : PlayerState
     {
         if (!GameManager.Pause)
         {
-            Horizontal = Input.GetAxis("Horizontal");
-            Vertical = Input.GetAxis("Vertical");
+            if(HP > 0)
+            {
+                Horizontal = Input.GetAxis("Horizontal");
+                Vertical = Input.GetAxis("Vertical");
 
-            Fuel -= Time.deltaTime * Fuel_Speed;
+                Fuel -= Time.deltaTime * Fuel_Speed;
 
-            Move();
+                Move();
 
-            Attack();
+                Attack();
 
-            Skill();
+                Skill();
 
-            if(Invincibility && Invincibility_Timer == 0)
-                StartCoroutine(AlphaChange());
+                if (Invincibility && Invincibility_Timer == 0)
+                    StartCoroutine(AlphaChange());
+
+                HP = Mathf.Min(Max_HP, HP);
+                Fuel = Mathf.Min(Max_Fuel, Fuel);
+            }
+            else
+            {
+                Death_Effect.SetActive(true);
+                transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(-45, 180, 0), Time.deltaTime * 2);
+                transform.Translate(0, 0, -Time.deltaTime * 10);
+
+                if(transform.position.y <= -20)
+                {
+                    SceneLoadManager.Instance.SceneLoad(SceneNames.Game);
+                    GameManager.Spawning = false;
+                    GameManager.Stage = 0;
+                    
+                    Destroy(this);
+                }
+            }
         }
     }
 
