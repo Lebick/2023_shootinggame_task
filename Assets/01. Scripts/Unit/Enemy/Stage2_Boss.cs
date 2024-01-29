@@ -8,6 +8,8 @@ public class Stage2_Boss : Enemy
     private const string player = "Player";
 
     private int Now_Pattern;
+
+    private float   Original_HP;
     
     private bool Patterning;
     private bool isSummon;
@@ -41,6 +43,10 @@ public class Stage2_Boss : Enemy
         Eye_Met = Eye.transform.Find("Eye").GetComponent<MeshRenderer>().materials;
 
         Pattern0_Pos = Pattern0_Axis.GetComponentsInChildren<Transform>(true);
+
+        Original_HP = HP;
+
+        Boss_HPBar.Instance.Show();
     }
 
     void Update()
@@ -62,6 +68,8 @@ public class Stage2_Boss : Enemy
                     StartCoroutine($"Pattern{Now_Pattern}");
                     //StartCoroutine($"Pattern2");
                 }
+
+                Boss_HPBar.Instance.HP_Fill.fillAmount = HP / Original_HP;
 
                 if (HP <= 0)
                 {

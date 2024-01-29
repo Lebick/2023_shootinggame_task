@@ -7,6 +7,8 @@ public class Stage1_Boss : Enemy
 {
     private const string player = "Player";
 
+    private float Original_HP;
+
     GameObject player_obj;
 
     private int Now_Pattern;
@@ -23,6 +25,10 @@ public class Stage1_Boss : Enemy
     private void Start()
     {
         player_obj = GameObject.FindGameObjectWithTag(player);
+
+        Original_HP = HP;
+
+        Boss_HPBar.Instance.Show();
     }
 
     void Update()
@@ -43,6 +49,8 @@ public class Stage1_Boss : Enemy
                     Now_Pattern = Pattern;
                     StartCoroutine($"Pattern{Now_Pattern}");
                 }
+
+                Boss_HPBar.Instance.HP_Fill.fillAmount = HP / Original_HP;
 
                 if (HP <= 0)
                 {
