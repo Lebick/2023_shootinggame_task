@@ -82,7 +82,7 @@ MonoBehaviour:
   Skill_1_CD: 5
   Skill_2_CD: 10
   Movement_Speed: 20
-  Fuel_Speed: 5
+  Fuel_Speed: 2
   Invincibility_Time: 1
   PlayerObj: {fileID: 718757998548076319}
   Axis: {fileID: 376300461892717756}

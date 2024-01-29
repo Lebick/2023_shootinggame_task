@@ -10,7 +10,7 @@ public class Player : PlayerState
             Vertical;
 
     public  float   Movement_Speed,
-                    Fuel_Speed = 2,
+                    Fuel_Speed = 1,
                     Invincibility_Time = 1;
 
     public  GameObject  PlayerObj,

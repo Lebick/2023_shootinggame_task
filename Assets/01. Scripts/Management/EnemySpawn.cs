@@ -20,7 +20,7 @@ public class EnemySpawn : MonoBehaviour
     {
         if (GameManager.Spawning)
         {
-            if(GameManager.time >= 5f)
+            if(GameManager.time >= 90f)
             {
                 Instantiate(Boss[GameManager.Stage - 1], new Vector3(0, 0, 60), Quaternion.identity);
                 GameManager.Spawning = false;

@@ -31,6 +31,8 @@ public class Enemy : MonoBehaviour
     public  GameObject      bullet,
                             Death_Effect;
 
+    public  GameObject[]    Items;
+
     GameObject Player;
     GameObject Axis;
 
@@ -80,6 +82,28 @@ public class Enemy : MonoBehaviour
                 GameManager.Kill_Enemy++;
                 GameObject Effect = Instantiate(Death_Effect, transform.position, Death_Effect.transform.rotation); //이펙트 소환
                 Destroy(Effect, Effect.GetComponent<ParticleSystem>().main.startLifetime.constant); //이펙트 시간 다되면 삭제
+
+                int item = Random.Range(0, 20);
+                switch (item)
+                {
+                    case 0:
+                        Instantiate(ItemList.AtkItem, transform.position, Quaternion.identity);
+                        break;
+
+                    case 1:
+                        Instantiate(ItemList.HPItem, transform.position, Quaternion.identity);
+                        break;
+
+                    case 2:
+                        Instantiate(ItemList.InvincibilityItem, transform.position, Quaternion.identity);
+                        break;
+
+                    case 3: case 4: case 5: case 6: case 7:
+                        Instantiate(ItemList.FuelItem, transform.position, Quaternion.identity);
+                        break;
+
+                }
+
                 Destroy(gameObject);
             }
 
