@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour
 
     public  static  bool    GameStart;
 
+    public  static  bool    Spawning;
+
     public  static  bool    GameEnd;
 
     public  static  KeyCode AttackKey   = KeyCode.Space;
@@ -21,6 +23,10 @@ public class GameManager : MonoBehaviour
 
     public  static  GameManager Instance;
 
+    [SerializeField] private GameObject GameplayManager;
+    [SerializeField] private GameObject GameplayUI;
+    [SerializeField] private GameObject StageUI;
+
     private void Awake()
     {
         if (Instance == null)
@@ -29,28 +35,30 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
     }
 
-    void Start()
+    public void GameStarting()
     {
-        DontDestroyOnLoad(gameObject);
+        time = 0;
+        Kill_Enemy = 0;
+        GameplayManager.SetActive(true);
+        GameplayUI.SetActive(true);
+
+        StageUI.SetActive(false);
+        StageUI.SetActive(true);
+        Spawning = true;
     }
 
-    void Update()
+    private void Update()
     {
-        switch (SceneManager.GetActiveScene().name[^1].ToString())
+        if (GameStart)
+            time += Time.deltaTime;
+
+        if(SceneManager.GetActiveScene().name == "Game")
         {
-            case "1":
-                Stage = 1;
-                time += Time.deltaTime;
-                break;
+            if (GameplayUI == null)
+                GameplayUI = GameObject.Find("Canvases").transform.Find("GameCanvas").gameObject;
 
-            case "2":
-                Stage = 2;
-                time += Time.deltaTime;
-                break;
-
-            default:
-                Stage = 0;
-                break;
+            if (StageUI == null)
+                StageUI = GameplayUI.transform.Find("Stage_Num").gameObject;
         }
     }
 }

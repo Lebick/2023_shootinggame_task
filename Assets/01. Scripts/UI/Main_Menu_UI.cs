@@ -7,35 +7,28 @@ public class Main_Menu_UI : MonoBehaviour
 {
     [SerializeField]    private GameObject[]    Buttons;
 
-
     public  GameObject      How_To_Play_Obj,
                             Player_Obj;
 
-
     public  static  Main_Menu_UI    Instance;
-
-    bool Start;
-
-    float Player_Obj_Speed = 0.05f;
 
 
     private void Awake()
     {
         if(Instance == null)
-        {
             Instance = this;
-        }
         else
-        {
             Destroy(gameObject);
-        }
     }
 
     public void OnClickGamePlayBtn()
     {
         UIButtonEnabled(false);
         GetComponent<Animator>().SetTrigger("Hide");
-        Start = true;
+        GameManager.GameStart = true;
+        GameManager.Stage = 1;
+        GameManager.Instance.Invoke(nameof(GameManager.Instance.GameStarting), 0.7f);
+        PlayerState.StateReset();
     }
 
     public void OnClickRankingBtn()
@@ -58,20 +51,6 @@ public class Main_Menu_UI : MonoBehaviour
         {
             Button btn = button.GetComponent<Button>();
             btn.enabled = t_or_f;
-        }
-    }
-
-    private void Update()
-    {
-        if (Start)
-        {
-            Player_Obj_Speed += Player_Obj_Speed * Time.deltaTime;
-            Player_Obj.transform.Translate(0, 0, -Player_Obj_Speed);
-            if(Player_Obj.transform.position.z >= 1000)
-            {
-                SceneLoadManager.Instance.SceneLoad(SceneNames.Stage1);
-                Destroy(gameObject);
-            }
         }
     }
 }

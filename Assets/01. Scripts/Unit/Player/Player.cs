@@ -34,7 +34,6 @@ public class Player : PlayerState
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
         }
         else
             Destroy(gameObject);

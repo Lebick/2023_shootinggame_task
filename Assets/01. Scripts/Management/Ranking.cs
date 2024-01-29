@@ -32,7 +32,7 @@ public class Ranking : MonoBehaviour
         LoadData();
         if (GameManager.GameEnd)
         {
-            if (data.Score.Count > 0 && int.Parse(data.Score[data.Score.Count - 1]) >= GameManager.Score)
+            if (data.Score.Count == 5 && int.Parse(data.Score[data.Score.Count - 1]) >= GameManager.Score)
             {
                 Ranking_Add.SetActive(false);
                 AnyKeyDown = true;
@@ -53,7 +53,7 @@ public class Ranking : MonoBehaviour
     {
         if(AnyKeyDown && Input.anyKeyDown)
         {
-            SceneLoadManager.Instance.SceneLoad(SceneNames.MainMenu);
+            SceneLoadManager.Instance.SceneLoad(SceneNames.Game);
             Destroy(this);
         }
     }
@@ -92,6 +92,7 @@ public class Ranking : MonoBehaviour
         {
             data = new RankingData();
         }
+        Data_Sort();
         UIUpdate();
     }
 
@@ -99,6 +100,13 @@ public class Ranking : MonoBehaviour
     {
         data.Name.Add(PlayerName.text);
         data.Score.Add(GameManager.Score.ToString("D6"));
+        Data_Sort();
+
+        if(data.Score.Count > 5)
+        {
+            data.Name.RemoveAt(5);
+            data.Score.RemoveAt(5);
+        }
 
         string json = JsonUtility.ToJson(data, true);
         string filePath = Path.Combine(Application.persistentDataPath, "Ranking.json");
@@ -108,13 +116,14 @@ public class Ranking : MonoBehaviour
         UIUpdate();
         Message.color = Color.white;
         Message.text = "등록 성공! 아무 키나 입력시 메인화면으로 돌아갑니다.";
+        GameManager.Score = 0;
+
         AnyKeyDown = true;
     }
 
 
     void UIUpdate()
     {
-        Data_Sort();
         Ranking_List.text = string.Empty;
 
         for (int i=0; i<5; i++)

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public enum SceneNames
 {
-    MainMenu,
+    Game,
     Ranking,
     Stage1,
     Stage2
@@ -27,7 +27,6 @@ public class SceneLoadManager : MonoBehaviour
         if(Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(this);
         }
         else
         {
@@ -37,7 +36,7 @@ public class SceneLoadManager : MonoBehaviour
 
     private void Update()
     {
-
+        
         if (Fading)
         {
             bool all_move = false;

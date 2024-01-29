@@ -33,8 +33,19 @@ public class PlayerState : MonoBehaviour
 
 
 
+    public static void SkillReset()
+    {
+        Skill_1_Count = 0;
+        Skill_2_Count = 0;
+        Skill_1_CD_timer = 0;
+        Skill_2_CD_timer = 0;
+    }
+
     public static void StateReset()
     {
+        HP = Max_HP;
+        Fuel = Max_Fuel;
+        Atk_Level = 0;
         Skill_1_Count = 0;
         Skill_2_Count = 0;
         Skill_1_CD_timer = 0;

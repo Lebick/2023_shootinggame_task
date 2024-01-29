@@ -9,8 +9,6 @@ public class CheatManager : MonoBehaviour
 
     void Start()
     {
-        DontDestroyOnLoad(gameObject);
-
         cheatActions.Add(KeyCode.F1, CheatAction1); //F1키를 Key로, CheatAction1를 Value로 설정한다.
         cheatActions.Add(KeyCode.F2, CheatAction2); //F2키를 Key로, CheatAction2를 Value로 설정한다.
         cheatActions.Add(KeyCode.F3, CheatAction3); //반복...

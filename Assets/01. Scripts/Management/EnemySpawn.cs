@@ -14,14 +14,16 @@ public class EnemySpawn : MonoBehaviour
 
     float               Spawn_timer;
 
+    public  static  int EnemySpawnLength = 3;
+
     void Update()
     {
-        if (GameManager.GameStart)
+        if (GameManager.Spawning)
         {
-            if(GameManager.time >= 90f)
+            if(GameManager.time >= 5f)
             {
                 Instantiate(Boss[GameManager.Stage - 1], new Vector3(0, 0, 60), Quaternion.identity);
-                Destroy(this);
+                GameManager.Spawning = false;
             }
 
             Spawn_timer += Time.deltaTime;
@@ -31,7 +33,7 @@ public class EnemySpawn : MonoBehaviour
 
                 for(int i=0; i<Random.Range(1,4); i++) // 1~3È¸ ¼ÒÈ¯
                 {
-                    int enemy = Random.Range(0, Enemy.Length);
+                    int enemy = Random.Range(0, EnemySpawnLength);
                     Instantiate(Enemy[enemy], SpawnPoint(), Quaternion.identity);
                 }
             }
