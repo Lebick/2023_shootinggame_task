@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -44,6 +45,7 @@ public class GameManager : MonoBehaviour
 
         StageUI.SetActive(false);
         StageUI.SetActive(true);
+        StageUI.transform.GetChild(0).GetComponent<Text>().text = $"Stage {Stage}";
         Spawning = true;
     }
 

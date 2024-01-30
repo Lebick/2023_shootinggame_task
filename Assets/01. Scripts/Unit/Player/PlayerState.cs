@@ -29,6 +29,7 @@ public class PlayerState : MonoBehaviour
 
     //
     public  static  bool    Invincibility = false;
+    public  static  bool    Item_Invincibility = false;
 
 
 
@@ -51,5 +52,6 @@ public class PlayerState : MonoBehaviour
         Skill_1_CD_timer = 0;
         Skill_2_CD_timer = 0;
         Invincibility = false;
+        Item_Invincibility = false;
     }
 }

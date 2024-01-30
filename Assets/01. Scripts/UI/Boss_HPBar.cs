@@ -22,4 +22,9 @@ public class Boss_HPBar : MonoBehaviour
     {
         contant.SetActive(true);
     }
+
+    public void Hide()
+    {
+        contant.SetActive(false);
+    }
 }

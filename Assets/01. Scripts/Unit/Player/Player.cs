@@ -11,24 +11,30 @@ public class Player : PlayerState
 
     public  float   Movement_Speed,
                     Fuel_Speed = 1,
-                    Invincibility_Time = 1;
+                    Invincibility_Time = 1,
+                    Item_Invincibility_Time = 3;
 
     public  GameObject  PlayerObj,
                         Axis,
                         Bullet,
                         Bomb,
                         Bomb_Effect,
-                        Death_Effect;
+                        Death_Effect,
+                        Auxiliary_Ship;
+
+    public  Material    Shield_Met;
 
     GameObject bomb_copy;
 
     float   Ho_Rotation_Value,
             Ver_Rotation_Value;
 
-    float   Atk_CD_Timer,
-            Invincibility_Timer;
+    [HideInInspector]
+    public float    Atk_CD_Timer,
+                    Invincibility_Timer,
+                    Item_Invincibility_Timer;
 
-    int Alpha;
+    int Alpha = 0;
 
     private void Awake()
     {
@@ -40,6 +46,8 @@ public class Player : PlayerState
             Destroy(gameObject);
 
         StateReset();
+
+        Shield_Met.color = new Color(0, 0.623f, 1, 0);
     }
 
     
@@ -47,7 +55,7 @@ public class Player : PlayerState
     {
         if (!GameManager.Pause)
         {
-            if(HP > 0)
+            if(HP > 0 && Fuel > 0)
             {
                 Horizontal = Input.GetAxis("Horizontal");
                 Vertical = Input.GetAxis("Vertical");
@@ -60,8 +68,11 @@ public class Player : PlayerState
 
                 Skill();
 
-                if (Invincibility && Invincibility_Timer == 0)
+                if (!Item_Invincibility && Invincibility && Invincibility_Timer == 0)
                     StartCoroutine(AlphaChange());
+
+                if (Item_Invincibility)
+                    Shield_AlphaChange();
 
                 HP = Mathf.Min(Max_HP, HP);
                 Fuel = Mathf.Min(Max_Fuel, Fuel);
@@ -91,12 +102,6 @@ public class Player : PlayerState
         {
             transform.Translate(new Vector3(Horizontal, 0, Vertical) * Time.deltaTime * Movement_Speed, Space.World);
 
-            Ho_Rotation_Value = (Horizontal == 0) ? 0 : (Horizontal > 0) ? 20 : -20;
-            Ver_Rotation_Value = (Vertical == 0) ? 0 : (Vertical > 0) ? -20 : 20;
-
-            Quaternion rotate = Quaternion.Euler(Ver_Rotation_Value, 180, Ho_Rotation_Value);
-            Axis.transform.rotation = Quaternion.Lerp(Axis.transform.rotation, rotate, 2 * Time.deltaTime);
-
             var viewPos = Camera.main.WorldToViewportPoint(transform.position);
 
             if (viewPos.x > 1) viewPos.x = 1;
@@ -108,6 +113,12 @@ public class Player : PlayerState
 
             transform.position = new Vector3(translatePos.x, transform.position.y, translatePos.z);
         }
+
+        Ho_Rotation_Value = (Horizontal == 0) ? 0 : (Horizontal > 0) ? 20 : -20;
+        Ver_Rotation_Value = (Vertical == 0) ? 0 : (Vertical > 0) ? -20 : 20;
+
+        Quaternion rotate = Quaternion.Euler(Ver_Rotation_Value, 180, Ho_Rotation_Value);
+        Axis.transform.rotation = Quaternion.Lerp(Axis.transform.rotation, rotate, 2 * Time.deltaTime);
     }
 
 
@@ -140,12 +151,15 @@ public class Player : PlayerState
                     int fire = Random.Range(0, 3);
                     if(fire == 0)
                     {
-                        Unit.Instance.SummonBullet(Bullet, transform.position + new Vector3(1, 0, 0), transform.eulerAngles + new Vector3(0, 45, 0), 4, 0.6f, 90, "Enemy");
-                        Unit.Instance.SummonBullet(Bullet, transform.position - new Vector3(1, 0, 0), transform.eulerAngles - new Vector3(0, 45, 0), 4, 0.6f, 90, "Enemy");
+                        Unit.Instance.SummonBullet(Bullet, transform.position + new Vector3(1, 0, 0), transform.eulerAngles + new Vector3(0, 22.5f, 0), 10, 0.6f, 90, "Enemy");
+                        Unit.Instance.SummonBullet(Bullet, transform.position - new Vector3(1, 0, 0), transform.eulerAngles - new Vector3(0, 22.5f, 0), 10, 0.6f, 90, "Enemy");
                     }
                     Atk_CD_Timer -= 0.0033f;
                 }
             }
+
+            if (Atk_Level >= 3)
+                Auxiliary_Ship.SetActive(true);
         }
     }
 
@@ -244,5 +258,26 @@ public class Player : PlayerState
 
         Invincibility = false;
         Invincibility_Timer = 0;
+    }
+
+    void Shield_AlphaChange()
+    {
+        Item_Invincibility_Timer += Time.deltaTime;
+
+        Shield_Met.color = new Color(0, 0.623f, 1, Mathf.Lerp(Shield_Met.color.a, Alpha, Time.deltaTime * 5));
+
+        if (Shield_Met.color.a >= 0.8f)
+            Alpha = 0;
+
+        if (Shield_Met.color.a <= 0.2f)
+            Alpha = 1;
+
+        if(Item_Invincibility_Timer >= Item_Invincibility_Time)
+        {
+            Shield_Met.color = new Color(0, 0.623f, 1, 0);
+            Item_Invincibility = false;
+            Item_Invincibility_Timer = 0;
+            Invincibility = false;
+        }
     }
 }

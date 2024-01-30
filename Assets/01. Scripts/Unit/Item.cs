@@ -30,11 +30,16 @@ public class Item : MonoBehaviour
             switch (Item_Type)
             {
                 case 0: //공격 업그레이드 아이템
-                    PlayerState.Atk_Level++;
+                    if (PlayerState.Atk_Level < 3)
+                        PlayerState.Atk_Level++;
+                    else
+                        GameManager.Score += 2000;
                     break;
 
                 case 1: //무적 아이템
-                    print("무적");
+                    PlayerState.Item_Invincibility = true;
+                    PlayerState.Invincibility = true;
+                    Player.Instance.Item_Invincibility_Timer = 0;
                     break;
 
                 case 2: //체력 회복 아이템

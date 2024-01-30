@@ -14,19 +14,20 @@ public class EnemySpawn : MonoBehaviour
 
     float               Spawn_timer;
 
+    public  float       Boss_SpawnTime = 90;
+
     public  static  int EnemySpawnLength = 3;
 
     void Update()
     {
         if (GameManager.Spawning)
         {
-            if(GameManager.time >= 90f)
+            if(GameManager.time >= Boss_SpawnTime)
             {
                 Instantiate(Boss[GameManager.Stage - 1], new Vector3(0, 0, 60), Quaternion.identity);
                 GameManager.Spawning = false;
             }
-
-            Spawn_timer += Time.deltaTime;
+            Spawn_timer += Time.deltaTime * (GameManager.time / Boss_SpawnTime + 0.5f + GameManager.Stage * 0.2f);
             if (Spawn_timer >= Spawn_CD)
             {
                 Spawn_timer -= Spawn_CD;

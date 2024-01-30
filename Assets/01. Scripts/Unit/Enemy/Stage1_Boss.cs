@@ -71,6 +71,7 @@ public class Stage1_Boss : Enemy
         GameObject Effect = Instantiate(Death_Effect, transform.position, Death_Effect.transform.rotation); //이펙트 소환
         Destroy(Effect, Effect.GetComponent<ParticleSystem>().main.startLifetime.constant); //이펙트 시간 다되면 삭제
         Result.Instance.StartCoroutine(Result.Instance.Result_Show(2));
+        Boss_HPBar.Instance.Hide();
         Destroy(gameObject);
     }
 

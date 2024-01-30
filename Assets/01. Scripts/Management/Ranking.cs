@@ -37,7 +37,8 @@ public class Ranking : MonoBehaviour
                 Ranking_Add.SetActive(false);
                 AnyKeyDown = true;
                 Message.color = Color.white;
-                Message.text = "아무 키나 입력시 메인화면으로 돌아갑니다.";
+                Message.text = "스코어가 낮아 랭킹에 등록할 수 없습니다.\n" +
+                    "아무 키나 입력시 메인화면으로 돌아갑니다.";
             }
         }
         else
@@ -53,6 +54,7 @@ public class Ranking : MonoBehaviour
     {
         if(AnyKeyDown && Input.anyKeyDown)
         {
+            GameManager.GameEnd = false;
             SceneLoadManager.Instance.SceneLoad(SceneNames.Game);
             Destroy(this);
         }

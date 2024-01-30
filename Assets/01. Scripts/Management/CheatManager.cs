@@ -77,9 +77,15 @@ public class CheatManager : MonoBehaviour
 
     private void CheatAction6()
     {
-        if (GameManager.Stage == 1)
-            SceneLoadManager.Instance.SceneLoad(SceneNames.Stage2);
-        else
-            SceneLoadManager.Instance.SceneLoad(SceneNames.Stage1);
+        GameManager.time = 0;
+
+        GameManager.Spawning = false;
+        foreach (GameObject enemys in GameObject.FindGameObjectsWithTag("Enemy"))
+            Destroy(enemys);
+
+        foreach (GameObject bullets in GameObject.FindGameObjectsWithTag("Bullet"))
+            Destroy(bullets);
+
+        Result.Instance.StartCoroutine(Result.Instance.Result_Show());
     }
 }

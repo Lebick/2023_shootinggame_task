@@ -83,7 +83,7 @@ public class Enemy : MonoBehaviour
                 GameObject Effect = Instantiate(Death_Effect, transform.position, Death_Effect.transform.rotation); //이펙트 소환
                 Destroy(Effect, Effect.GetComponent<ParticleSystem>().main.startLifetime.constant); //이펙트 시간 다되면 삭제
 
-                int item = Random.Range(0, 20);
+                int item = Random.Range(0, 30);
                 switch (item)
                 {
                     case 0:
@@ -98,7 +98,7 @@ public class Enemy : MonoBehaviour
                         Instantiate(ItemList.InvincibilityItem, transform.position, Quaternion.identity);
                         break;
 
-                    case 3: case 4: case 5: case 6: case 7:
+                    case 3: case 4: case 5:
                         Instantiate(ItemList.FuelItem, transform.position, Quaternion.identity);
                         break;
 
