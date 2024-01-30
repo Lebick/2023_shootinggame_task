@@ -16,10 +16,12 @@ public class EnemySpawn : MonoBehaviour
 
     public  float       Boss_SpawnTime = 90;
 
-    public  static  int EnemySpawnLength = 3;
+    public  static  int EnemySpawnLength;
 
     void Update()
     {
+        EnemySpawnLength = 2 + GameManager.Stage;
+
         if (GameManager.Spawning)
         {
             if(GameManager.time >= Boss_SpawnTime)
