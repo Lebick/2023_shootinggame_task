@@ -63,7 +63,7 @@ public class Result : MonoBehaviour
             anim.SetTrigger("Hide");
             yield return new WaitForSeconds(1f);
             GameManager.Stage = 2;
-            GameManager.Instance.Invoke(nameof(GameManager.Instance.GameStarting), 0.7f);
+            GameManager.Instance.Invoke(nameof(GameManager.Instance.GameStarting), 0);
             PlayerState.SkillReset();
         }
     }

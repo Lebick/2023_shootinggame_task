@@ -27,13 +27,26 @@ public class Auxiliary_SpaceShip : MonoBehaviour
         transform.localPosition = Vector3.Lerp(transform.localPosition, Default_Pos, Time.deltaTime * 2);
         //본래 위치쪽으로 서서히(플레이어로부터 일정거리 이상 벗어나지 못하게 하기 위함)sd
 
-        if (Target_Enemy == null) //목표 적이 없다면?
-        {
-            if (GameObject.FindWithTag("Enemy")) //적이 존재한다면?
-                Target_Enemy = GameObject.FindWithTag("Enemy"); //적을 목표로 지정
 
+        if (GameObject.FindGameObjectsWithTag("Enemy").Length > 0)
+        {
+            float enemy_distance = Mathf.Infinity;
+
+            foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
+            {
+                float distance = Vector3.Distance(enemy.transform.position, transform.position);
+
+                if (enemy.GetComponent<Enemy>().Type == EnemyType.Monster4) //몹 4면
+                    continue; //저리가
+                else if (distance < enemy_distance)
+                {
+                    enemy_distance = distance;
+                    Target_Enemy = enemy;
+                }
+            }
         }
-        else //목표 적이 있다면?
+
+        if (Target_Enemy != null) //목표 적이 있다면?
         {
             //적을 보게하는 회전값
             Quaternion targetRotation = Quaternion.LookRotation(Target_Enemy.transform.position - transform.position);

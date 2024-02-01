@@ -83,11 +83,12 @@ MonoBehaviour:
   Damage: 20
   Atk_CD: 0.75
   MyScore: 500
-  Type: 5
+  Type: 6
   BulletSpawnPos:
   - {fileID: 4020639137666475285}
   bullet: {fileID: 8329294674428431637, guid: 9649fccbdc3ec7448a10f168446bbdf3, type: 3}
   Death_Effect: {fileID: 6197847715497314955, guid: 09efa28b26fc06248909995fadbfcad2, type: 3}
+  Items: []
 --- !u!65 &4020639137788096899
 BoxCollider:
   m_ObjectHideFlags: 0

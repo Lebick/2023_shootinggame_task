@@ -11169,7 +11169,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd03e82ec81825943bdf8f3580b36349, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GameplayManager: {fileID: 1926678083}
   GameplayUI: {fileID: 1497695762}
   StageUI: {fileID: 1735770307}
 --- !u!4 &625281275
@@ -19178,7 +19177,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1926678084
 Transform:
   m_ObjectHideFlags: 0
@@ -19249,6 +19248,7 @@ MonoBehaviour:
   - {fileID: 2464184097680595770, guid: 8645ac56f748a8843b3a6b7184018874, type: 3}
   - {fileID: 3048527145821136167, guid: 7c32215ba45a7344f9d5f60a3f8735cb, type: 3}
   - {fileID: 4020639137788096898, guid: 88afbe59a0c457544a20d884082b19e3, type: 3}
+  - {fileID: 5212265234988348625, guid: b92e2d022c7495549873c3c6f9e2cfae, type: 3}
   Boss:
   - {fileID: 5926234693851337059, guid: 46d81a65b5dd2854685a85a3fbc425b9, type: 3}
   - {fileID: 8510032965930662347, guid: b429afa2008c8a64c92a77c22fdcc83a, type: 3}
@@ -25304,7 +25304,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Skill_1_CD: 5
   Skill_2_CD: 10
-  Movement_Speed: 20
+  Movement_Speed: 30
   Fuel_Speed: 1
   Invincibility_Time: 1
   Item_Invincibility_Time: 5

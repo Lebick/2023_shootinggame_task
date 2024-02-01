@@ -212,6 +212,7 @@ public class Player : PlayerState
     {
         if (bomb_copy != null && bomb_copy.transform.position.y <= -1) //폭탄 폭발
         {
+            Cam_Effect.Instance.StartCoroutine(Cam_Effect.Instance.Cam_Shake(5, 0.5f));
             GameObject Effect = Instantiate(Bomb_Effect, bomb_copy.transform.position, Quaternion.identity); //이펙트 소환
             Destroy(Effect, Effect.GetComponent<ParticleSystem>().main.startLifetime.constant); //이펙트 시간 다되면 삭제
             Destroy(bomb_copy); //폭탄 삭제
@@ -221,13 +222,7 @@ public class Player : PlayerState
             foreach (GameObject enemy in Enemys)
             {
                 if (enemy.GetComponent<Enemy>())
-                    enemy.GetComponent<Enemy>().HP -= 100; //일반 적 HP 감소
-
-                if (enemy.GetComponent<Stage1_Boss>())
-                    enemy.GetComponent<Stage1_Boss>().HP -= 100; //보스 HP 감소
-
-                if (enemy.GetComponent<Stage2_Boss>())
-                    enemy.GetComponent<Stage2_Boss>().HP -= 100; //보스 HP 감소
+                    enemy.GetComponent<Enemy>().HP -= 100; //HP 감소
             }
 
             foreach (GameObject bul in Bullets)
@@ -235,8 +230,6 @@ public class Player : PlayerState
                 if (bul.GetComponent<Bullet>().Atk_Obj_Tag == "Player") //플레이어를 목표로 하는 탄환
                     Destroy(bul); //제거
             }
-
-            Cam_Effect.Instance.StartCoroutine(Cam_Effect.Instance.Cam_Shake(5, 0.5f));
         }
     }
 

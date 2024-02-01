@@ -20,7 +20,7 @@ public class EnemySpawn : MonoBehaviour
 
     void Update()
     {
-        EnemySpawnLength = 2 + GameManager.Stage;
+        EnemySpawnLength = GameManager.Stage == 1 ? 3 : GameManager.Stage == 2 ? 5 : 0;
 
         if (GameManager.Spawning)
         {

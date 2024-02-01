@@ -24,7 +24,6 @@ public class GameManager : MonoBehaviour
 
     public  static  GameManager Instance;
 
-    [SerializeField] private GameObject GameplayManager;
     [SerializeField] private GameObject GameplayUI;
     [SerializeField] private GameObject StageUI;
 
@@ -40,7 +39,6 @@ public class GameManager : MonoBehaviour
     {
         time = 0;
         Kill_Enemy = 0;
-        GameplayManager.SetActive(true);
         GameplayUI.SetActive(true);
 
         StageUI.SetActive(false);

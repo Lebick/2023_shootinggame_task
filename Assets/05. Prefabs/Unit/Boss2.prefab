@@ -224,10 +224,11 @@ MonoBehaviour:
   Damage: 20
   Atk_CD: 0
   MyScore: 0
-  Type: 4
+  Type: 5
   BulletSpawnPos: []
   bullet: {fileID: 0}
   Death_Effect: {fileID: 0}
+  Items: []
 --- !u!1 &7554940664635156844
 GameObject:
   m_ObjectHideFlags: 0
@@ -563,6 +564,7 @@ MonoBehaviour:
   BulletSpawnPos: []
   bullet: {fileID: 8329294674428431637, guid: a04603248cb57cd43ab92770906e6b93, type: 3}
   Death_Effect: {fileID: 6197847715497314955, guid: 09efa28b26fc06248909995fadbfcad2, type: 3}
+  Items: []
   Pattern0_Axis: {fileID: 7554940665307627254}
   Pattern1_Warning_Effect: {fileID: 2440917316926264580}
   Pattern1_Range: {fileID: 7554940664390499351}

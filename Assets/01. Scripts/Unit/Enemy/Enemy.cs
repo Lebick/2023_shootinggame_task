@@ -8,6 +8,7 @@ public enum EnemyType
     Monster1,
     Monster2,
     Monster3,
+    Monster4,
     Boss,
     BossEnemy1
 }
@@ -80,8 +81,6 @@ public class Enemy : MonoBehaviour
             {
                 GameManager.Score += MyScore;
                 GameManager.Kill_Enemy++;
-                GameObject Effect = Instantiate(Death_Effect, transform.position, Death_Effect.transform.rotation); //이펙트 소환
-                Destroy(Effect, Effect.GetComponent<ParticleSystem>().main.startLifetime.constant); //이펙트 시간 다되면 삭제
 
                 int item = Random.Range(0, 30);
                 switch (item)
@@ -104,7 +103,14 @@ public class Enemy : MonoBehaviour
 
                 }
 
-                Destroy(gameObject);
+                if (Type == EnemyType.Monster4)
+                    Explosion();
+                else
+                {
+                    GameObject Effect = Instantiate(Death_Effect, transform.position, Death_Effect.transform.rotation); //이펙트 소환
+                    Destroy(Effect, Effect.GetComponent<ParticleSystem>().main.startLifetime.constant); //이펙트 시간 다되면 삭제
+                    Destroy(gameObject);
+                }
             }
 
             if (!wasVisible)
@@ -116,15 +122,21 @@ public class Enemy : MonoBehaviour
 
 
         if (PlayerJoin)
+        {
             AttackManager.Instance.Attack(Player, Damage);
+        }
     }
 
 
     void Move()
     {
         //플레이어를 보게하는 회전값
-        Quaternion targetRotation = Quaternion.LookRotation(Player.transform.position - Axis.transform.position);
-        targetRotation *= Quaternion.Euler(0, 180, 0);
+        Quaternion targetRotation = new();
+        if (Axis != null)
+        {
+            targetRotation = Quaternion.LookRotation(Player.transform.position - Axis.transform.position);
+            targetRotation *= Quaternion.Euler(0, 180, 0);
+        }
 
         switch (Type)
         {
@@ -150,6 +162,15 @@ public class Enemy : MonoBehaviour
                 //플레이어를 바라봄
                 transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, 2 * Time.deltaTime);
                 //바라보는 방향으로 이동
+                transform.Translate(0, 0, -Movement_Speed * Time.deltaTime);
+                break;
+
+            case EnemyType.Monster4:
+                Atk_Timer += Time.deltaTime;
+
+                if (Atk_Timer <= 5)
+                    transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, 2 * Time.deltaTime);
+
                 transform.Translate(0, 0, -Movement_Speed * Time.deltaTime);
                 break;
 
@@ -205,6 +226,14 @@ public class Enemy : MonoBehaviour
                 }
                 break;
 
+            case EnemyType.Monster4:
+                Material bodymet = Axis.transform.GetChild(0).GetComponent<MeshRenderer>().materials[2];
+                if (Vector3.Distance(Player.transform.position, transform.position) <= 10) //플레이어와 자신과의 거리가 10 이하라면
+                    bodymet.color = new Color(1, Mathf.Lerp(bodymet.color.g, 0, Time.deltaTime * 0.8f), Mathf.Lerp(bodymet.color.b, 0, Time.deltaTime * 0.8f));
+                else
+                    bodymet.color = new Color(1, Mathf.Lerp(bodymet.color.g, 1, Time.deltaTime * 0.8f), Mathf.Lerp(bodymet.color.b, 1, Time.deltaTime * 0.8f));
+                break;
+
             case EnemyType.BossEnemy1:
                 Atk_Timer += Time.deltaTime;
                 if (Atk_Timer >= Atk_CD)
@@ -214,6 +243,15 @@ public class Enemy : MonoBehaviour
                 }
                 break;
         }
+    }
+
+    void Explosion()
+    {
+        AttackManager.Instance.Attack(Player, Damage);
+
+        GameObject Effect = Instantiate(Death_Effect, transform.position, Death_Effect.transform.rotation); //이펙트 소환
+        Destroy(Effect, Effect.GetComponent<ParticleSystem>().main.startLifetime.constant); //이펙트 시간 다되면 삭제
+        Destroy(gameObject);
     }
 
 
@@ -233,7 +271,11 @@ public class Enemy : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            PlayerJoin = true;
+
+            if (Type == EnemyType.Monster4)
+                Explosion();
+            else
+                PlayerJoin = true;
         }
     }
 

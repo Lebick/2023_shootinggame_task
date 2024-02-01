@@ -118,7 +118,6 @@ public class Ranking : MonoBehaviour
         UIUpdate();
         Message.color = Color.white;
         Message.text = "등록 성공! 아무 키나 입력시 메인화면으로 돌아갑니다.";
-        GameManager.Score = 0;
 
         AnyKeyDown = true;
     }

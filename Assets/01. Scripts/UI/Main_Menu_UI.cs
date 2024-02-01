@@ -26,6 +26,7 @@ public class Main_Menu_UI : MonoBehaviour
         UIButtonEnabled(false);
         GetComponent<Animator>().SetTrigger("Hide");
         GameManager.GameStart = true;
+        GameManager.Score = 0;
         GameManager.Stage = 1;
         GameManager.Instance.Invoke(nameof(GameManager.Instance.GameStarting), 0.7f);
         PlayerState.StateReset();

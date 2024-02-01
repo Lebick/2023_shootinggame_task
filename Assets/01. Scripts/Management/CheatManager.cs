@@ -42,9 +42,10 @@ public class CheatManager : MonoBehaviour
     {
         GameObject[] Enemys = GameObject.FindGameObjectsWithTag("Enemy");
 
-        foreach(GameObject enemy in Enemys)
+        foreach (GameObject enemy in Enemys)
         {
-            Destroy(enemy);
+            if (enemy.GetComponent<Enemy>())
+                enemy.GetComponent<Enemy>().HP = 0;
         }
     }
 

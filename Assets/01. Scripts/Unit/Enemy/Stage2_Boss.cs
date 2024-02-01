@@ -51,6 +51,7 @@ public class Stage2_Boss : Enemy
 
     void Update()
     {
+        Boss_HPBar.Instance.HP_Fill.fillAmount = HP / Original_HP;
         if (!isDeath)
         {
             if (isSummon)
@@ -68,8 +69,6 @@ public class Stage2_Boss : Enemy
                     StartCoroutine($"Pattern{Now_Pattern}");
                     //StartCoroutine($"Pattern2");
                 }
-
-                Boss_HPBar.Instance.HP_Fill.fillAmount = HP / Original_HP;
 
                 if (HP <= 0)
                 {
